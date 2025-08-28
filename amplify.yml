@@ -10,9 +10,9 @@ frontend:
         - pnpm install --frozen-lockfile
     build:
       commands:
-        - pnpm run build
+        - pnpm turbo run build --filter=studio...
   artifacts:
-    baseDirectory: apps/studio/.next   # 👈 adjust this if your frontend lives elsewhere
+    baseDirectory: apps/studio/.next
     files:
       - '**/*'
   cache:
