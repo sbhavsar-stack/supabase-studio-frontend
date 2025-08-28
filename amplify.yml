@@ -8,17 +8,17 @@ frontend:
         - corepack enable
         - corepack prepare pnpm@latest --activate
 
-        # ✅ Prune the repo to only Studio dependencies (saves memory)
+        # ✅ Prune to only Studio dependencies
         - pnpm dlx turbo prune studio --docker
 
-        # ✅ Install only what's needed
-        - pnpm install --frozen-lockfile
+        # ✅ Install inside pruned output
+        - cd out && pnpm install --frozen-lockfile
     build:
       commands:
-        # ✅ Increase memory available to Node.js inside build
-        - NODE_OPTIONS="--max-old-space-size=4096" pnpm run build
+        # ✅ Build Studio only, with more memory
+        - cd out && NODE_OPTIONS="--max-old-space-size=4096" pnpm --filter studio run build
   artifacts:
-    baseDirectory: apps/studio/.next   # <-- Correct for Next.js
+    baseDirectory: out/apps/studio/.next
     files:
       - '**/*'
   cache:
