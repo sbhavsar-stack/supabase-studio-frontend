@@ -7,12 +7,18 @@ frontend:
         - nvm use 22
         - corepack enable
         - corepack prepare pnpm@latest --activate
+
+        # ✅ Prune the repo to only Studio dependencies (saves memory)
+        - pnpm dlx turbo prune studio --docker
+
+        # ✅ Install only what's needed
         - pnpm install --frozen-lockfile
     build:
       commands:
-        - pnpm turbo run build --filter=studio...
+        # ✅ Increase memory available to Node.js inside build
+        - NODE_OPTIONS="--max-old-space-size=4096" pnpm run build
   artifacts:
-    baseDirectory: apps/studio/.next
+    baseDirectory: apps/studio/.next   # <-- Correct for Next.js
     files:
       - '**/*'
   cache:
