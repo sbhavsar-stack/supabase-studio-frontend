@@ -8,16 +8,17 @@ frontend:
         - corepack enable
         - corepack prepare pnpm@latest --activate
 
-        # ✅ Prune to only Studio dependencies
-        - pnpm dlx turbo prune studio --docker
+        # ✅ Generate pruned monorepo
+        - pnpm dlx turbo prune studio --docker --out-dir=out
 
-        # ✅ Install inside pruned output
+        # ✅ Install only pruned deps
         - cd out && pnpm install --frozen-lockfile
     build:
       commands:
-        # ✅ Build Studio only, with more memory
-        - cd out && NODE_OPTIONS="--max-old-space-size=4096" pnpm --filter studio run build
+        # ✅ Build inside the pruned repo
+        - cd out && NODE_OPTIONS="--max-old-space-size=4096" pnpm --filter studio... run build
   artifacts:
+    # ✅ Output path is now relative to `out`
     baseDirectory: out/apps/studio/.next
     files:
       - '**/*'
