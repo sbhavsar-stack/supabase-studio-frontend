@@ -2,22 +2,23 @@ version: 1
 frontend:
   phases:
     preBuild:
-      runtime-versions:
-        nodejs: 22
       commands:
+        # Force Node 22 in Amplify
+        - echo "Installing Node.js 22..."
+        - n lts  # installs latest LTS
+        - n 22   # switch to Node 22
+        - node -v
         - corepack enable
         - corepack prepare pnpm@latest --activate
         - pnpm install --frozen-lockfile
     build:
       commands:
-        # build only the studio app
-        - NODE_OPTIONS="--max-old-space-size=4096" pnpm turbo run build --filter=studio...
+        - pnpm run build
   artifacts:
-    baseDirectory: apps/studio/.next
+    baseDirectory: apps/studio/.next   # Next.js build output
     files:
       - '**/*'
   cache:
     paths:
       - node_modules/**/*
       - .pnpm-store/**/*
-      - apps/studio/.next/cache/**/*
