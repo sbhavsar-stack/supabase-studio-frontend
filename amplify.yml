@@ -10,7 +10,6 @@ frontend:
         - pnpm install --frozen-lockfile
     build:
       commands:
-        # Build only the 'studio' app to avoid SIGKILL / memory issues
         - pnpm --filter studio build
   artifacts:
     baseDirectory: apps/studio/.next
