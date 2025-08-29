@@ -7,22 +7,21 @@ frontend:
         - nvm use 22
         - corepack enable
         - corepack prepare pnpm@latest --activate
-
-        # ✅ Generate pruned monorepo
-        - pnpm dlx turbo prune studio --docker --out-dir=out
-
-        # ✅ Install only pruned deps
+        # Install root deps first
+        - pnpm install --frozen-lockfile
+        # Prune only studio (no --docker to avoid missing files issue)
+        - pnpm dlx turbo prune studio --out-dir=out
         - cd out && pnpm install --frozen-lockfile
     build:
       commands:
-        # ✅ Build inside the pruned repo
-        - cd out && NODE_OPTIONS="--max-old-space-size=4096" pnpm --filter studio... run build
+        # Build only studio app
+        - cd out && pnpm run build --filter=studio...
   artifacts:
-    # ✅ Output path is now relative to `out`
-    baseDirectory: out/apps/studio/.next
+    baseDirectory: out/apps/studio/.next   # 👈 pruned output Next.js build dir
     files:
       - '**/*'
   cache:
     paths:
       - node_modules/**/*
       - .pnpm-store/**/*
+      - out/node_modules/**/*
