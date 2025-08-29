@@ -2,26 +2,22 @@ version: 1
 frontend:
   phases:
     preBuild:
+      runtime-versions:
+        nodejs: 22
       commands:
-        - nvm install 22
-        - nvm use 22
         - corepack enable
         - corepack prepare pnpm@latest --activate
-
-        # ✅ Prune to only Studio dependencies
-        - pnpm dlx turbo prune studio --docker
-
-        # ✅ Install inside pruned output
-        - cd out && pnpm install --frozen-lockfile
+        - pnpm install --frozen-lockfile
     build:
       commands:
-        # ✅ Build Studio only, with more memory
-        - cd out && NODE_OPTIONS="--max-old-space-size=4096" pnpm --filter studio run build
+        # build only the studio app
+        - NODE_OPTIONS="--max-old-space-size=4096" pnpm turbo run build --filter=studio...
   artifacts:
-    baseDirectory: out/apps/studio/.next
+    baseDirectory: apps/studio/.next
     files:
       - '**/*'
   cache:
     paths:
       - node_modules/**/*
       - .pnpm-store/**/*
+      - apps/studio/.next/cache/**/*
