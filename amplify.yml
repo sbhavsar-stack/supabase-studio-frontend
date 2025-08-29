@@ -3,11 +3,8 @@ frontend:
   phases:
     preBuild:
       commands:
-        # Force Node 22 in Amplify
-        - echo "Installing Node.js 22..."
-        - n lts  # installs latest LTS
-        - n 22   # switch to Node 22
-        - node -v
+        - nvm install 22
+        - nvm use 22
         - corepack enable
         - corepack prepare pnpm@latest --activate
         - pnpm install --frozen-lockfile
@@ -15,7 +12,7 @@ frontend:
       commands:
         - pnpm run build
   artifacts:
-    baseDirectory: apps/studio/.next   # Next.js build output
+    baseDirectory: apps/studio/.next   # 👈 adjust this if your frontend lives elsewhere
     files:
       - '**/*'
   cache:
